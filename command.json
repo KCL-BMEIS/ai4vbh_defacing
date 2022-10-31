@@ -1,0 +1,143 @@
+{
+  "name": "AI4VBH-deface (based on NiftyReg)",
+  "label": "AI4VBH-deface (based on NiftyReg)",
+  "description": "Module to deface head image based on segmentation propagation and image smoothing.",
+  "version": "1.0",
+  "schema-version": "1.0",
+  "info-url": "None",
+  "image": "xnat/ai4vbh_defacing:2.0",
+  "type": "docker",
+  "command-line": "run.sh /input",
+  "mounts": [
+    {
+      "name": "input-scan-mount",
+      "writable": false,
+      "path": "/input"
+    },
+    {
+      "name": "output-mount",
+      "writable": true,
+      "path": "/output"
+    }
+  ],
+  "environment-variables": {},
+  "ports": {},
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "defaced-output",
+      "description": "The input image has been defaced",
+      "required": true,
+      "mount": "output-mount",
+      "path": null,
+      "glob": null
+    }
+  ],
+  "xnat": [
+    {
+      "name": "AI4VBH-defacing",
+      "label": null,
+      "description": "Run the defacing processing from a Session",
+      "contexts": [
+        "xnat:imageSessionData"
+      ],
+      "external-inputs": [
+        {
+          "name": "session",
+          "label": null,
+          "description": "Input session",
+          "type": "Session",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": null,
+          "provides-files-for-command-mount": null,
+          "via-setup-command": null,
+          "user-settable": null,
+          "load-children": true
+        }
+      ],
+      "derived-inputs": [
+        {
+          "name": "input-scan",
+          "label": null,
+          "description": "The input scan, to be defaced",
+          "type": "Scan",
+          "matcher": "'DICOM' in @.resources[*].label",
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": null,
+          "provides-files-for-command-mount": null,
+          "user-settable": null,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": null,
+          "via-setup-command": null,
+          "multiple": false,
+          "parser": null
+        },
+        {
+          "name": "input-scan-dicom",
+          "label": null,
+          "description": "The input scan's dicom resource",
+          "type": "Resource",
+          "matcher": "@.label == 'DICOM'",
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": null,
+          "provides-files-for-command-mount": "input-scan-mount",
+          "user-settable": null,
+          "load-children": true,
+          "derived-from-wrapper-input": "input-scan",
+          "derived-from-xnat-object-property": null,
+          "via-setup-command": null,
+          "multiple": false,
+          "parser": null
+        },
+        {
+          "name": "input-scan-id",
+          "label": null,
+          "description": "The input scan's id",
+          "type": "string",
+          "matcher": null,
+          "default-value": null,
+          "required": true,
+          "replacement-key": null,
+          "sensitive": null,
+          "provides-value-for-command-input": null,
+          "provides-files-for-command-mount": null,
+          "user-settable": null,
+          "load-children": true,
+          "derived-from-wrapper-input": "input-scan",
+          "derived-from-xnat-object-property": "id",
+          "via-setup-command": null,
+          "multiple": false,
+          "parser": null
+        }
+      ],
+      "output-handlers": [
+        {
+          "name": "defaced",
+          "accepts-command-output": "defaced-output",
+          "via-wrapup-command": null,
+          "as-a-child-of": "input-scan",
+          "type": "Resource",
+          "label": "DEFACED_#input-scan-id#",
+          "format": null,
+          "description": null,
+          "content": null,
+          "tags": []
+        }
+      ]
+    }
+  ],
+  "container-labels": {},
+  "generic-resources": {},
+  "ulimits": {}
+}
